@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
 <title>Centros Educativos de Aragón · CSIF</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
-/* ── RESET TOTAL para evitar interferencias con CSS externo ── */
 html, body {
   margin: 0 !important; padding: 0 !important;
   width: 100% !important; height: 100% !important;
@@ -15,31 +15,24 @@ html, body {
   font-family: "Segoe UI", Arial, sans-serif !important;
   background: #f5f9f5 !important;
   color: #1a2a1a !important;
-  box-sizing: border-box !important;
 }
 *, *::before, *::after { box-sizing: border-box; }
-
-/* ── PALETA CSIF: verde + rosa ── */
 :root {
-  --verde:       #2d7a2d;
-  --verde-oscuro:#1a4f1a;
-  --verde-claro: #e8f5e8;
-  --verde-medio: #c8e6c8;
-  --rosa:        #c2185b;
-  --rosa-claro:  #fce4ec;
-  --rosa-medio:  #f48fb1;
-  --gris:        #5a6a5a;
-  --gris-claro:  #f0f4f0;
-  --blanco:      #ffffff;
+  --verde:        #2d7a2d;
+  --verde-oscuro: #1a4f1a;
+  --verde-claro:  #e8f5e8;
+  --verde-medio:  #c8e6c8;
+  --rosa:         #c2185b;
+  --rosa-claro:   #fce4ec;
+  --gris:         #5a6a5a;
+  --gris-claro:   #f0f4f0;
+  --blanco:       #ffffff;
 }
-
-/* ── HEADER ── */
 header {
   background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde) 60%, #3a9a3a 100%);
   color: white; padding: 12px 20px;
   display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-shrink: 0;
 }
 .header-logo { font-size: 24px; }
 .header-text h1 { font-size: 1.1rem; font-weight: 700; margin: 0; }
@@ -47,30 +40,22 @@ header {
 .header-badge {
   margin-left: auto; background: var(--rosa); color: white;
   font-size: 0.65rem; font-weight: 700; padding: 4px 10px;
-  border-radius: 20px; white-space: nowrap; letter-spacing: 0.3px;
+  border-radius: 20px; white-space: nowrap;
 }
-
-/* ── LAYOUT ── */
 .app { display: flex; flex-direction: column; height: 100vh; }
 .container { display: flex; flex: 1; overflow: hidden; }
-
-/* ── SIDEBAR ── */
 .sidebar {
   width: 360px; min-width: 280px; background: var(--blanco);
   display: flex; flex-direction: column;
   box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 10; overflow: hidden;
 }
 .sidebar-inner { padding: 12px; overflow-y: auto; flex: 1; }
-
-/* ── SECCIONES ── */
 .filter-section { margin-bottom: 11px; }
 .filter-section label {
   display: block; font-size: 0.67rem; font-weight: 700;
   text-transform: uppercase; color: var(--gris);
   margin-bottom: 5px; letter-spacing: 0.6px;
 }
-
-/* ── BOTONES CUERPO ── */
 .cuerpo-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .cuerpo-btn {
   padding: 7px 5px; border: 2px solid #c8d8c8; border-radius: 8px;
@@ -82,16 +67,12 @@ header {
 .cuerpo-btn.active { background: var(--verde); border-color: var(--verde); color: white; }
 .cuerpo-btn.todos  { grid-column: 1 / -1; background: var(--gris-claro); }
 .cuerpo-btn.todos.active { background: var(--verde-oscuro); border-color: var(--verde-oscuro); color: white; }
-
-/* ── BUSCADOR ── */
 .search-wrap input {
   width: 100%; padding: 9px 14px; border: 2px solid #c8d8c8;
   border-radius: 8px; font-size: 0.84rem; outline: none;
   transition: border-color 0.15s; background: var(--gris-claro);
 }
 .search-wrap input:focus { border-color: var(--verde); background: white; }
-
-/* ── GEOLOCALIZACIÓN ── */
 .geo-btn {
   width: 100%; padding: 9px; border: 2px solid var(--rosa);
   border-radius: 8px; background: white; color: var(--rosa);
@@ -101,16 +82,12 @@ header {
 }
 .geo-btn:hover, .geo-btn.active { background: var(--rosa); color: white; }
 .geo-status { font-size: 0.68rem; color: var(--gris); margin-top: 4px; min-height: 14px; text-align: center; }
-
-/* ── SELECT PROVINCIA ── */
 select {
   width: 100%; padding: 8px 12px; border: 2px solid #c8d8c8;
   border-radius: 8px; font-size: 0.82rem; outline: none;
   background: var(--gris-claro); cursor: pointer;
 }
 select:focus { border-color: var(--verde); }
-
-/* ── CONTADOR ── */
 .counter {
   background: var(--verde-claro); border-radius: 8px; padding: 8px 12px;
   display: flex; align-items: center; justify-content: space-between;
@@ -118,8 +95,6 @@ select:focus { border-color: var(--verde); }
   border: 1px solid var(--verde-medio);
 }
 .counter strong { color: var(--verde-oscuro); font-size: 1.05rem; }
-
-/* ── LISTA ── */
 .centro-list { list-style: none; margin: 0; padding: 0; }
 .centro-item {
   padding: 9px 11px; border-bottom: 1px solid var(--gris-claro);
@@ -136,19 +111,18 @@ select:focus { border-color: var(--verde); }
   padding: 2px 7px; border-radius: 20px; margin-top: 4px;
   text-transform: uppercase; letter-spacing: 0.3px;
 }
-
-/* ── MAPA ── */
 #map { flex: 1; z-index: 1; }
-
-/* ── POPUPS ── */
 .leaflet-popup-content { font-size: 0.84rem; line-height: 1.55; min-width: 200px; }
 .popup-nombre { font-weight: 700; font-size: 0.9rem; color: var(--verde-oscuro); margin-bottom: 5px; }
 .popup-cuerpo-tag {
   display: inline-block; font-size: 0.66rem; font-weight: 700;
   padding: 2px 8px; border-radius: 20px; margin: 2px 2px 0 0;
 }
-
-/* ── RESPONSIVE ── */
+#map-error {
+  display: none; flex: 1; align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px; color: var(--gris); font-size: 0.9rem;
+  background: var(--gris-claro);
+}
 @media (max-width: 650px) {
   .container { flex-direction: column; }
   .sidebar { width: 100%; height: 44vh; min-width: unset; }
@@ -159,7 +133,6 @@ select:focus { border-color: var(--verde); }
 </head>
 <body>
 <div class="app">
-
 <header>
   <div class="header-logo">🏫</div>
   <div class="header-text">
@@ -168,11 +141,9 @@ select:focus { border-color: var(--verde); }
   </div>
   <span class="header-badge">CSIF Educación Aragón</span>
 </header>
-
 <div class="container">
   <aside class="sidebar">
     <div class="sidebar-inner">
-
       <div class="filter-section">
         <label>📋 Tu cuerpo docente</label>
         <div class="cuerpo-tabs">
@@ -183,20 +154,17 @@ select:focus { border-color: var(--verde); }
           <button class="cuerpo-btn" data-cuerpo="Conservatorio">🎵 Conservatorio</button>
         </div>
       </div>
-
       <div class="filter-section">
         <label>🔍 Buscar centro o localidad</label>
         <div class="search-wrap">
           <input type="text" id="searchInput" placeholder="Nombre, localidad...">
         </div>
       </div>
-
       <div class="filter-section">
         <label>📍 Ordenar por cercanía</label>
         <button class="geo-btn" id="geoBtn">📍 Usar mi ubicación</button>
         <div class="geo-status" id="geoStatus">Activa la ubicación para ordenar por cercanía</div>
       </div>
-
       <div class="filter-section">
         <label>🗺️ Filtrar por provincia</label>
         <select id="provinciaSelect">
@@ -206,17 +174,20 @@ select:focus { border-color: var(--verde); }
           <option value="Zaragoza">Zaragoza</option>
         </select>
       </div>
-
       <div class="counter">
         <span>Centros mostrados:</span>
         <strong id="contadorNum">0</strong>
       </div>
-
       <ul class="centro-list" id="centroList"></ul>
     </div>
   </aside>
-
   <div id="map"></div>
+  <div id="map-error">
+    <span style="font-size:2rem">🗺️</span>
+    <span>No se pudo cargar el mapa.</span>
+    <a href="https://csifaragon.github.io/mapa-csif/mapa_centros_aragon.html" target="_blank"
+       style="color:var(--verde);font-weight:700">Abrir mapa en pantalla completa →</a>
+  </div>
 </div>
 </div>
 
@@ -238,15 +209,23 @@ const TIPO_CFG = {
 
 let userLat=null, userLon=null, filtroCuerpo="Todos";
 let filtroBusqueda="", filtrosProv="", selectedIdx=null;
+let map, markerLayer, userMarker=null, markers={};
 
-const map = L.map("map").setView([41.65,-0.88],8);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  attribution:"© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
-  maxZoom:19
-}).addTo(map);
-
-const markerLayer = L.layerGroup().addTo(map);
-let userMarker=null, markers={};
+function initMap(){
+  try {
+    map = L.map("map", {preferCanvas: true}).setView([41.65,-0.88],8);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      attribution:"© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
+      maxZoom:19, crossOrigin: true
+    }).addTo(map);
+    markerLayer = L.layerGroup().addTo(map);
+    aplicar();
+  } catch(e) {
+    document.getElementById("map").style.display = "none";
+    document.getElementById("map-error").style.display = "flex";
+    aplicarSoloLista();
+  }
+}
 
 function haversine(a,b,c,d){
   const R=6371,dLat=(c-a)*Math.PI/180,dLon=(d-b)*Math.PI/180;
@@ -277,7 +256,7 @@ function mkIcon(tipo,sel){
   });
 }
 
-function aplicar(){
+function getLista(){
   let lista=CENTROS_RAW.map((c,i)=>({...c,_idx:i}));
   lista=lista.filter(c=>matchesCuerpo(c,filtroCuerpo));
   if(filtrosProv) lista=lista.filter(c=>c.provincia===filtrosProv);
@@ -294,13 +273,13 @@ function aplicar(){
     _dist:(userLat!==null&&c.lat&&c.lon)?haversine(userLat,userLon,c.lat,c.lon):null
   }));
   if(userLat!==null) lista.sort((a,b)=>(a._dist??99999)-(b._dist??99999));
+  return lista;
+}
 
+function renderLista(lista){
   document.getElementById("contadorNum").textContent=lista.length;
   const ul=document.getElementById("centroList");
   ul.innerHTML="";
-  markerLayer.clearLayers();
-  markers={};
-
   lista.forEach(c=>{
     const cfg=TIPO_CFG[c.tipo]||TIPO_CFG["Sin clasificar"];
     const li=document.createElement("li");
@@ -312,31 +291,42 @@ function aplicar(){
       `<span class="centro-tipo" style="background:${cfg.color}22;color:${cfg.color}">${cfg.label}</span>`;
     li.addEventListener("click",()=>sel(c));
     ul.appendChild(li);
-
-    if(c.lat&&c.lon){
-      const m=L.marker([c.lat,c.lon],{icon:mkIcon(c.tipo,c._idx===selectedIdx)});
-      m.bindPopup(
-        `<div class="popup-nombre">${c.nombre}</div>`+
-        `<div style="color:#5a6a5a;font-size:.79rem;line-height:1.7">`+
-        `📍 ${c.direccion||""}<br>`+
-        `🏘️ ${c.localidad}, ${c.provincia}<br>`+
-        `🏷️ ${c.tipo}`+
-        (c._dist!==null?`<br>🚗 <strong style="color:#c2185b">${distLabel(c._dist)}</strong> de tu ubicación`:"")+
-        `</div>`+
-        (c.cuerpos&&c.cuerpos.length?
-          `<div style="margin-top:7px">${c.cuerpos.map(b=>`<span class="popup-cuerpo-tag" style="background:${cfg.color}22;color:${cfg.color}">${b}</span>`).join("")}</div>`:""),
-        {maxWidth:270}
-      );
-      m.on("click",()=>sel(c));
-      m.addTo(markerLayer);
-      markers[c._idx]=m;
-    }
   });
 }
 
+function aplicar(){
+  const lista=getLista();
+  renderLista(lista);
+  if(!map||!markerLayer) return;
+  markerLayer.clearLayers();
+  markers={};
+  lista.forEach(c=>{
+    if(!c.lat||!c.lon) return;
+    const cfg=TIPO_CFG[c.tipo]||TIPO_CFG["Sin clasificar"];
+    const m=L.marker([c.lat,c.lon],{icon:mkIcon(c.tipo,c._idx===selectedIdx)});
+    m.bindPopup(
+      `<div class="popup-nombre">${c.nombre}</div>`+
+      `<div style="color:#5a6a5a;font-size:.79rem;line-height:1.7">`+
+      `📍 ${c.direccion||""}<br>`+
+      `🏘️ ${c.localidad}, ${c.provincia}<br>`+
+      `🏷️ ${c.tipo}`+
+      (c._dist!==null?`<br>🚗 <strong style="color:#c2185b">${distLabel(c._dist)}</strong> de tu ubicación`:"")+
+      `</div>`+
+      (c.cuerpos&&c.cuerpos.length?
+        `<div style="margin-top:7px">${c.cuerpos.map(b=>`<span class="popup-cuerpo-tag" style="background:${cfg.color}22;color:${cfg.color}">${b}</span>`).join("")}</div>`:""),
+      {maxWidth:270}
+    );
+    m.on("click",()=>sel(c));
+    m.addTo(markerLayer);
+    markers[c._idx]=m;
+  });
+}
+
+function aplicarSoloLista(){ renderLista(getLista()); }
+
 function sel(c){
   selectedIdx=c._idx;
-  if(c.lat&&c.lon&&markers[c._idx]){
+  if(map&&c.lat&&c.lon&&markers[c._idx]){
     map.setView([c.lat,c.lon],Math.max(map.getZoom(),14));
     markers[c._idx].openPopup();
   }
@@ -366,7 +356,7 @@ document.getElementById("geoBtn").addEventListener("click",()=>{
   const st=document.getElementById("geoStatus");
   if(userLat!==null){
     userLat=null; userLon=null;
-    if(userMarker){map.removeLayer(userMarker);userMarker=null;}
+    if(userMarker&&map){map.removeLayer(userMarker);userMarker=null;}
     btn.classList.remove("active");
     btn.textContent="📍 Usar mi ubicación";
     st.textContent="Activa la ubicación para ordenar por cercanía";
@@ -375,12 +365,14 @@ document.getElementById("geoBtn").addEventListener("click",()=>{
   btn.textContent="⏳ Localizando...";
   navigator.geolocation.getCurrentPosition(pos=>{
     userLat=pos.coords.latitude; userLon=pos.coords.longitude;
-    if(userMarker) map.removeLayer(userMarker);
-    userMarker=L.marker([userLat,userLon],{icon:L.divIcon({
-      className:"", iconSize:[22,22], iconAnchor:[11,11],
-      html:`<div style="background:#c2185b;width:22px;height:22px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px #c2185b44"></div>`
-    })}).addTo(map).bindPopup("<strong>📍 Tu ubicación</strong>").openPopup();
-    map.setView([userLat,userLon],11);
+    if(map){
+      if(userMarker) map.removeLayer(userMarker);
+      userMarker=L.marker([userLat,userLon],{icon:L.divIcon({
+        className:"", iconSize:[22,22], iconAnchor:[11,11],
+        html:`<div style="background:#c2185b;width:22px;height:22px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px #c2185b44"></div>`
+      })}).addTo(map).bindPopup("<strong>📍 Tu ubicación</strong>").openPopup();
+      map.setView([userLat,userLon],11);
+    }
     btn.classList.add("active");
     btn.textContent="✅ Ubicación activa (desactivar)";
     st.textContent=`${userLat.toFixed(4)}, ${userLon.toFixed(4)}`;
@@ -391,7 +383,12 @@ document.getElementById("geoBtn").addEventListener("click",()=>{
   },{enableHighAccuracy:true,timeout:10000});
 });
 
-aplicar();
+// Esperar a que Leaflet esté listo
+if(typeof L !== 'undefined'){
+  initMap();
+} else {
+  window.addEventListener('load', initMap);
+}
 </script>
 </body>
 </html>
